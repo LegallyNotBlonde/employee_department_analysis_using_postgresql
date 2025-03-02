@@ -44,14 +44,15 @@ In addition to the above metrics, I'm calculating (work in progress) the followi
 * **Average Historic Attrition Rates by Department**: Calculating attrition by dividing the number of employees who left each department by the average number of employees in that department over the same three-year period. This approach highlights specific retention challenges within departments, facilitating tailored interventions.
 
 ### Importance of Quarterly Forecasts
-While the analysis includes annual metrics, it's advisable for companies to perform **quarterly forecasts**. By examining average KPIs from corresponding quarters over the past three years, organizations can address seasonality and make more accurate predictions. Seasonal trends can significantly impact workforce dynamics, and quarterly analyses enable businesses to anticipate and respond to these fluctuations effectively.
+While the analysis includes annual metrics, it's advisable for companies to perform **quarterly forecasts**. By examining average KPIs from corresponding quarters over the past three years, organizations can **address seasonality** and make more accurate predictions. Seasonal trends can significantly impact workforce dynamics, and quarterly analyses enable businesses to anticipate and respond to these fluctuations effectively.
 
 ### Focus on Recent Data
 The decision to focus on the past three years stems from significant market shifts in the post-pandemic era. Trends from this period are more relevant to our current analysis than older data, ensuring that our insights and projections align with the present economic landscape.
 
 ### Scenario-Based Workforce Planning
 To enhance the robustness of our analysis, incorporating scenario-based workforce planning is essential. This involves developing multiple scenarios—such as rapid growth, economic downturns, or unexpected attrition—to assess potential impacts on staffing needs and prepare contingency plans accordingly. This approach showcases the ability to navigate uncertainties and make informed decisions.
-<p> To further refine forecasting accuracy, incorporating **variance analysis** is key. By regularly comparing forecasted figures with actual outcomes, organizations can identify discrepancies, understand their root causes, and fine-tune future predictions, ultimately leading to more precise and adaptable workforce planning.
+
+<p> To further refine forecasting accuracy, incorporating variance analysis is key. By regularly comparing forecasted figures with actual outcomes, organizations can identify discrepancies, understand their root causes, and fine-tune future predictions, ultimately leading to more precise and adaptable workforce planning.
 
 ### Advanced Metrics and KPIs
 Expanding the analysis to include additional key performance indicators provides deeper insights into workforce dynamics:
