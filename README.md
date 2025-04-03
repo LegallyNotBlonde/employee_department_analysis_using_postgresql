@@ -1,93 +1,118 @@
-# Project overview (using SQL)
+# 🧠 Project Overview (Using SQL)
 
-In this project, I conducted a series of SQL queries on a PostgreSQL database to manage and analyze employee and department data.
+* In this project, I designed and analyzed a PostgreSQL relational database to explore employee and department data, identify workforce trends, and support future headcount planning.
 
-I designed an Entity Relationship Model (ERM) using QuickDBD to visualize data relationships and structure the database efficiently. 
-<p> The process involved:
-
-* Creating a schema and building six tables for employees, departments, and related entities.
-* Defining primary and foreign keys to ensure data integrity and establish connections between tables.
-* Importing data and performing structured queries for in-depth analysis.
+* I used QuickDBD to design the schema and created SQL queries that uncover actionable insights and calculate KPIs to support both operational and strategic workforce decisions.
 
 ![ERM Diagram](https://github.com/LegallyNotBlonde/employee_department_analysis_using_postgresql/blob/main/EmployeeSQL/ERM_diagram.png)
 
-## Project Structure:
+---
 
-* **"EmployeeSQL" Folder**: Contains the ERM diagram, schema scripts, and analysis code.
-* **"data files" Folder**: Includes resource files.
+## 📁 Project Structure
 
-## Key SQL Concepts and Techniques:
+* **"EmployeeSQL" Folder**: ERM diagram, schema scripts, SQL query files.
+* **"data files" Folder**: Includes resource files and structured mock data.
+---
 
-* **SELECT** for data retrieval
-* **JOIN** to combine related tables
-* **WHERE** for filtering records
-* **GROUP BY** for aggregating data
-* **ORDER BY** for sorting results
+## 🛠 Key SQL Concepts and Techniques
+| **Concept**         | **Description**                                                                |
+|---------------------|--------------------------------------------------------------------------------|
+| `SELECT`            | Extracts specific data from one or more tables                                 |
+| `JOIN`              | Combines data across related tables                                             |
+| `WHERE`             | Filters records based on defined conditions                                     |
+| `GROUP BY`          | Aggregates data into meaningful groups                                          |
+| `ORDER BY`          | Sorts data by one or more columns                                               |
+| `CREATE VIEW`       | Allows safe analysis without modifying the original source tables              |
 
-## Results & Insights:
-This project demonstrates my ability to design a robust relational database and execute complex queries to extract actionable business insights from employee and department data. The analysis supports operational decision-making and provides a solid foundation for financial forecasting.
 
-### Key Metrics for Enhanced Workforce Analysis
-To deliver a comprehensive headcount and workforce analysis, I'm expanding (work in progress) the framework to include the following key metrics:
+## 🔍 General Workforce Trend Analysis (Current State)
+Using SQL, I analyzed workforce structure across all available years to explore hiring patterns, role distribution, and department dynamics. These findings help businesses:
 
-* **Current Headcount**: Total employees segmented by department, role, and region.
-* **New Hires Forecast**: Projected hiring per department and location for the next 12 months.
-* **Attrition Forecast**: Estimated employee turnover based on historical data.
-* **Total Headcount Projection**: Forecasted overall workforce size over the next 12 months.
-* **Salary and Benefits Cost Projection**: Estimated payroll expenses aligned with hiring plans.
+* Identify headcount trends  
+* Evaluate organizational structure  
+* Understand how roles and salaries are distributed  
+* Compare departments by workforce size, cost, and manager coverage
 
-### Calculating KPI Metrics
-In addition to the above metrics, I'm calculating (work in progress) the following Key Performance Indicators (KPIs) to provide deeper insights:
+### 📌 Sample Insights
 
-* **Historic Average Hiring Rates by Department**: Analyzing the number of new hires in each department over the past three years to determine average annual hiring rates. This departmental focus accounts for unique growth patterns and resource needs, enabling targeted recruitment strategies.
+| **Observation**                                          | **What It Tells Us**                                                                 |
+|----------------------------------------------------------|--------------------------------------------------------------------------------------|
+| The largest department has the lowest number of managers | Suggests possible leadership or oversight imbalance                                 |
+| Salary varies within the same job title                  | Highlights potential pay inconsistencies or misalignment in leveling                |
+| Some departments have no managers assigned               | Indicates possible data issues or management gaps                                   |
+| Regional headcount distribution is uneven                | Helps inform HR allocation and support planning                                     |
 
-* **Average Historic Attrition Rates by Department**: Calculating attrition by dividing the number of employees who left each department by the average number of employees in that department over the same three-year period. This approach highlights specific retention challenges within departments, facilitating tailored interventions.
+---
 
-### Importance of Quarterly Forecasts
-While the analysis includes annual metrics, it's advisable for companies to perform **quarterly forecasts**. By examining average KPIs from corresponding quarters over the past three years, organizations can **address seasonality** and make more accurate predictions. Seasonal trends can significantly impact workforce dynamics, and quarterly analyses enable businesses to anticipate and respond to these fluctuations effectively.
+### 📊 KPIs for Workforce Structure
 
-### Focus on Recent Data
-The decision to focus on the past three years stems from significant market shifts in the post-pandemic era. Trends from this period are more relevant to our current analysis than older data, ensuring that our insights and projections align with the present economic landscape.
+| **KPI**                        | **What It Measures**                                      | **Why It Matters**                                                               |
+|-------------------------------|-----------------------------------------------------------|----------------------------------------------------------------------------------|
+| Headcount by Department       | Total employees per department                            | Highlights team sizes and resource allocation                                   |
+| Manager-to-Employee Ratio     | Number of managers relative to staff                      | Identifies departments potentially under- or over-managed                       |
+| Average Salary by Role/Dept   | Mean salary grouped by role or department                 | Useful for benchmarking pay equity and consistency                              |
+| Department Size by Region     | Employee count by location and department                 | Helps assess geographic staffing balance                                        |
+| Gender Distribution           | Employees by gender across roles and departments          | Supports diversity and equity reporting                                         |
 
-### Scenario-Based Workforce Planning
-To enhance the robustness of our analysis, incorporating scenario-based workforce planning is essential. This involves developing multiple scenarios—such as rapid growth, economic downturns, or unexpected attrition—to assess potential impacts on staffing needs and prepare contingency plans accordingly. This approach showcases the ability to navigate uncertainties and make informed decisions.
+---
 
-<p> To further refine forecasting accuracy, incorporating variance analysis is key. By regularly comparing forecasted figures with actual outcomes, organizations can identify discrepancies, understand their root causes, and fine-tune future predictions, ultimately leading to more precise and adaptable workforce planning.
+## 📈 Forecasting Workforce Needs (3-Year Focus)
 
-### Advanced Metrics and KPIs
-Expanding the analysis to include additional key performance indicators provides deeper insights into workforce dynamics:
+To support headcount forecasting, I narrowed the analysis to the last **three years**, reflecting more recent trends shaped by post-pandemic market changes.
 
-* **Time-to-Hire**: Measuring the average duration required to fill open positions helps identify bottlenecks in the recruitment process.
+These recent trends provide a more realistic basis for hiring projections, attrition planning, and financial estimates.
 
-* **Internal Mobility Rate**: Tracking the percentage of employees transitioning between roles within the organization reflects opportunities for career development and effective talent utilization.
+---
 
-* **Absenteeism Rate**: Monitoring unplanned absences gauges employee engagement and potential productivity impacts.
+### 📅 Forecast-Oriented KPIs
 
-### Integration of Financial Metrics
-Incorporating financial data is crucial to assess the economic implications of headcount changes:
+| **KPI / Concept**             | **What It Measures**                                      | **Why It Matters**                                                               |
+|-------------------------------|-----------------------------------------------------------|----------------------------------------------------------------------------------|
+| Hiring Rate by Department     | Avg. new hires per department per year                    | Shows which teams are expanding and how fast                                     |
+| Attrition Rate by Department  | % of employees who left over average headcount            | Helps identify retention issues                                                  |
+| Quarterly Forecasting         | Seasonal trends over time                                 | Improves accuracy by addressing seasonality in hiring and exits                  |
+| Scenario Planning             | Forecast under multiple future conditions                 | Helps the company prepare for change and uncertainty                             |
+| Variance Analysis             | Forecast vs actual outcome comparison                     | Improves future projections by adjusting assumptions                             |
+| 3-Year Focus                  | Limits input to recent data only                          | Ensures relevance by focusing on post-pandemic trends                            |
 
-* **Fully Burdened Labor Rate**: Calculating the total cost of an employee, including salary, benefits, and overhead, provides insight into the financial impact of staffing decisions.
+---
 
-* **Cost of Labor**: Analyzing labor costs as a percentage of revenue evaluates operational efficiency and informs budgeting decisions.
+### 📊 Advanced Workforce KPIs
 
-### Dynamic Headcount Planning
-Transitioning from static annual planning to a dynamic, continuous approach allows for regular updates to forecasts, reflecting real-time data. This enables proactive adjustments to hiring plans in response to market fluctuations or internal changes.
+| **Metric / KPI**           | **What It Measures**                                         | **Why It Matters**                                                              |
+|----------------------------|--------------------------------------------------------------|----------------------------------------------------------------------------------|
+| Time-to-Hire               | Avg. number of days to fill open roles                       | Measures recruiting speed and identifies process inefficiencies                  |
+| Internal Mobility Rate     | % of employees who moved into new roles internally           | Shows how well the company develops and retains internal talent                  |
+| Absenteeism Rate           | Unplanned absences over total scheduled work days            | Tracks engagement and helps reduce productivity loss                             |
 
-### Visualization and Reporting
-Enhancing the project with clear, insightful visualizations aids in data interpretation:
+---
 
-* **Dashboards**: Developing interactive dashboards that display key metrics and trends facilitates quick comprehension and data-driven decision-making.
+### 💸 Financial Metrics for Headcount Planning
 
-* **Scenario Simulations**: Visualizing the outcomes of different workforce scenarios allows for comparison of potential impacts and supports strategic planning.
+| **Metric**                    | **What It Measures**                                           | **Why It Matters**                                                              |
+|-------------------------------|----------------------------------------------------------------|----------------------------------------------------------------------------------|
+| Fully Burdened Labor Rate     | Salary + benefits + overhead per employee                      | Provides true cost per employee, supports payroll budgeting                     |
+| Labor Cost as % of Revenue    | Total employee cost divided by company revenue                 | Helps assess workforce cost efficiency                                          |
 
-### Data Quality and Compliance
-Emphasizing the importance of data accuracy and regulatory compliance ensures the reliability and legality of the analysis:
+---
 
-* **Data Validation**: Implementing processes to ensure the integrity and reliability of data inputs is critical for accurate forecasting.
+## 📊 Visualization and Reporting
 
-* **Regulatory Adherence**: Staying informed about labor laws and industry regulations ensures that headcount strategies align with legal requirements.
+- **Interactive Dashboards** for workforce size, salary distribution, and KPIs  
+- **Scenario Simulations** to explore staffing plans under different business assumptions  
+- **Real-Time Updates** using SQL views to power dynamic analysis without modifying core data
 
-Integrating these elements provides deeper insights into how departmental headcount variations impact revenue. This data-driven approach can help establish more informed hiring priorities and optimize workforce planning.
+---
 
-## Source
-The original dataset was generated using [Mockaroo](https://mockaroo.com/), (2022), a realistic data generation tool. To support a more comprehensive analysis of employee trends and forecasting, I extended the dataset by applying structured randomization techniques in Excel. These updates include random date, salary, benefit, regions, and status fields to simulate patterns commonly found in real-world HR data. While the data remains synthetic, it has been carefully shaped to enable meaningful insights and practical analysis.
+## ✅ Data Quality and Compliance
+
+- **Built-in Data Validation** to catch nulls, duplicates, and date inconsistencies  
+- **Compliance Awareness** to align with HR data standards and support DEI monitoring
+
+---
+
+## 🧬 Source
+
+The original dataset was created using  [Mockaroo](https://mockaroo.com/), (2022), a realistic data generation tool. To enable deeper analysis, I extended the dataset using structured randomization techniques in Excel. These included adding realistic ranges for dates, salaries, benefits, regions, and employment status.
+
+<p> Although synthetic, the data was shaped to reflect patterns seen in real-world HR systems, enabling meaningful and practical workforce analysis.

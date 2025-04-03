@@ -1,90 +1,90 @@
--- List the employee number, last name, first name, sex, and salary of each employee
-SELECT e.emp_no, e.last_name, e.first_name, e.sex, s.salary
-FROM employees e
-JOIN salaries s ON e.emp_no = s.emp_no;
-
--- List the first name, last name, and hire date for the employees who were hired in 1986
-SELECT first_name, last_name, hire_date
-FROM employees
-WHERE hire_date BETWEEN '1986-01-01' AND '1986-12-31';
-
--- List the manager of each department along with their department number, department name, employee number, last name, and first name
-SELECT 
-    d.dept_no,
+-- CREATE FULL EMPLOYEE DATA VIEW  
+-- clean view for analysis without birth date; preserves original tables 
+-- =================================
+CREATE VIEW employee_data AS
+SELECT
+    e.emp_no,
+    e.first_name,
+    e.last_name,
+    e.sex,
+    e.hire_date,
+    e.departure_date,
+    e.emp_status,
+    e.region,
+    e.emp_title_id,
+    t.title,
     d.dept_name,
-    dm.emp_no,
-    e.last_name,
-    e.first_name
-FROM 
-    departments d
-JOIN 
-    dept_manager dm ON d.dept_no = dm.dept_no
-JOIN 
-    employees e ON dm.emp_no = e.emp_no;
+    s.salary,
+    s.benefits,
+    s.overhead_cost,
+    s.total_cost,
+    dm.emp_no AS manager_emp_no
+FROM employees e
+LEFT JOIN salaries s ON e.emp_no = s.emp_no
+LEFT JOIN titles t ON e.emp_title_id = t.title_id
+LEFT JOIN dept_emp de ON e.emp_no = de.emp_no
+LEFT JOIN departments d ON de.dept_no = d.dept_no
+LEFT JOIN dept_manager dm ON e.emp_no = dm.emp_no
+ORDER BY e.emp_no;
 
--- List the department number for each employee along with that employee’s employee number, last name, first name, and department name
+SELECT * FROM employee_data
+LIMIT 4;
+-- ==================================
+-- ANALYSIS QUERIES
+-- ==================================
+
+-- COMPANY SNAPSHOT: total active employees, total and average salary by today 
 SELECT 
-    de.dept_no,
-    e.emp_no,
-    e.last_name,
-    e.first_name,
-    d.dept_name
-FROM 
-    employees e
-JOIN 
-    dept_emp de ON e.emp_no = de.emp_no
-JOIN 
-    departments d ON de.dept_no = d.dept_no;
+    COUNT(*) AS total_active_employees,
+    SUM(salary) AS total_salary,
+    ROUND(AVG(salary), 0) AS average_salary
+FROM employee_data
+WHERE emp_status = 'Active';
 
--- List first name, last name, and sex of each employee whose first name is Hercules and whose last name begins with the letter B
+-- BY DEPARTMENT: headcount, avg salary, number of managers  
 SELECT 
-    first_name,
-    last_name,
-    sex
-FROM 
-    employees
-WHERE 
-    first_name = 'Hercules'
-    AND last_name LIKE 'B%';
+    dept_name,
+    COUNT(*) AS employee_count,
+    ROUND(AVG(salary), 0) AS avg_salary,
+    COUNT(manager_emp_no) AS num_managers
+FROM employee_data
+WHERE emp_status = 'Active'
+GROUP BY dept_name
+ORDER BY employee_count DESC;
 
--- List each employee in the Sales department, including their employee number, last name, and first name
+-- BY REGION: headcount, avg salary, managers  
 SELECT 
-    e.emp_no,
-    e.last_name,
-    e.first_name
-FROM 
-    employees e
-JOIN 
-    dept_emp de ON e.emp_no = de.emp_no
-JOIN 
-    departments d ON de.dept_no = d.dept_no
-WHERE 
-    d.dept_name = 'Sales';
+    region,
+    COUNT(*) AS employee_count,
+    ROUND(AVG(salary), 2) AS avg_salary,
+    COUNT(manager_emp_no) AS num_managers
+FROM employee_data
+WHERE emp_status = 'Active'
+GROUP BY region
+ORDER BY employee_count DESC;
 
--- List each employee in the Sales and Development departments, including their employee number, last name, first name, and department name
+-- EMPLOYEES OVER TIME: hiring trend by year  
 SELECT 
-    e.emp_no,
-    e.last_name,
-    e.first_name,
-    d.dept_name
-FROM 
-    employees e
-JOIN 
-    dept_emp de ON e.emp_no = de.emp_no
-JOIN 
-    departments d ON de.dept_no = d.dept_no
-WHERE 
-    d.dept_name IN ('Sales', 'Development');
+    EXTRACT(YEAR FROM hire_date) AS hire_year,
+    COUNT(*) AS employees_hired
+FROM employee_data
+GROUP BY hire_year
+ORDER BY hire_year;
 
--- List the frequency counts, in descending order, of all the employee last names (that is, how many employees share each last name)
+-- TERMINATION TREND: number of employees who left per year  
 SELECT 
-    last_name,
-    COUNT(*) AS frequency
-FROM 
-    employees
-GROUP BY 
-    last_name
-ORDER BY 
-    frequency DESC;
+    EXTRACT(YEAR FROM departure_date) AS termination_year,
+    COUNT(*) AS employees_left
+FROM employee_data
+WHERE departure_date IS NOT NULL
+GROUP BY termination_year
+ORDER BY termination_year;
 
-    
+-- TERMINATION TREND: number of employees who left per department
+SELECT 
+    dept_name AS department,
+    COUNT(emp_status) AS employees_left
+FROM employee_data
+WHERE emp_status = 'Terminated'
+GROUP BY dept_name
+ORDER BY employees_left DESC;
