@@ -36,24 +36,24 @@ The analysis spans several years of employee records to assess hiring activity, 
 
 ### Examples of Insights
 
-| **Observation**                                          | **Interpretation**                                                           |
-|----------------------------------------------------------|------------------------------------------------------------------------------|
-| Largest department has the fewest managers               | May indicate leadership coverage gaps                                        |
-| Salary varies within identical roles                     | Points to potential inconsistencies in compensation                          |
-| Some departments lack assigned managers                  | Could reflect data integrity issues or org gaps                              |
-| Uneven regional distribution                             | Suggests areas for improved staffing alignment                               |
-
+| **Observation**                                          | **Interpretation**                                                                 |
+|----------------------------------------------------------|------------------------------------------------------------------------------------|
+| Largest departments and regions don’t have proportionate number of managers | May signal gaps in leadership coverage or uneven span of control                  |
+| Salary ranges vary widely for the same role within a department            | Suggests possible pay disparities or inconsistent compensation practices          |
+| Some departments have no listed managers                                    | Could point to missing data or structural gaps in management assignment           |
+| Manager distribution doesn’t scale with team size across regions           | Highlights potential misalignment in regional staffing and oversight strategies   |
 ---
 
 ### Workforce KPIs
 
-| **KPI**                        | **Purpose**                                   | 
-|--------------------------------|-----------------------------------------------|
-| Headcount by Department        | Understands team size and resource allocation |
-| Manager-to-Employee Ratio      | Evaluates span of control across departments  |
-| Average Salary by Role         | Identifies pay patterns and benchmarks        |
-| Department Size by Region      | Supports regional workforce planning          |
-| Gender Distribution            | Helps assess diversity and equity             |
+| **KPI**                                   | **Purpose**                                                              |
+|------------------------------------------|--------------------------------------------------------------------------|
+| Headcount by Department                  | Understands team size and resource allocation                            |
+| Manager-to-Employee Ratio                | Evaluates span of control across departments                             |
+| Median, Minimum, and Maximum Salary by Role and Department | Highlights compensation range and role-level pay equity by team         |
+| Department Size by Region                | Supports regional workforce planning                                     |
+| Gender Distribution                      | Helps assess diversity and equity                                        |
+| Number of Managers per Region/Department | Surfaces leadership distribution and reveals potential gaps in oversight |
 ---
 
 ## Forecasting for the Next Three Years

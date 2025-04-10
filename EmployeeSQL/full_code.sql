@@ -1,10 +1,15 @@
+-- =================================
+-- EMPLOYEE DATA MODEL AND ANALYSIS
+-- Purpose: Enable workforce reporting and cost tracking
 -- Exported from QuickDBD: https://www.quickdatabasediagrams.com/
--- Note: the schema was updated after the draft was automatically 
--- created using QuickDBD tool (in some cases primary keys are also foreign keys)
+-- =================================
 
---TRUNCATE TABLE dept_manager, dept_emp, salaries, titles, departments, employees RESTART IDENTITY CASCADE;
---SELECT * FROM departmetns
---LIMIT 5;
+-- Drop existing tables and views if needed (for rebuild scenarios)
+-- TRUNCATE TABLE dept_manager, dept_emp, salaries, titles, departments, employees RESTART IDENTITY CASCADE;
+-- SELECT * FROM departments
+-- LIMIT 5;
+
+DROP VIEW IF EXISTS employee_data;
 -- ===============================
 -- CREATE TABLES
 -- ===============================
@@ -37,7 +42,7 @@ CREATE TABLE IF NOT EXISTS titles (
     PRIMARY KEY (title_id)
 );
 
--- 4. Create 'dept_emp' table with compound primary key
+-- 4.'dept_emp' table with compound primary key - employees by department (many-to-many)
 CREATE TABLE IF NOT EXISTS dept_emp (
     emp_no INT NOT NULL,
     dept_no CHAR(10) NOT NULL,
@@ -46,7 +51,7 @@ CREATE TABLE IF NOT EXISTS dept_emp (
     FOREIGN KEY (dept_no) REFERENCES departments(dept_no)
 );
 
--- 5. Create 'dept_manager' table with compound primary key
+-- 5. 'dept_manager' table with compound primary key - department managers (subset of employees)
 CREATE TABLE IF NOT EXISTS dept_manager (
     dept_no CHAR(10) NOT NULL,
     emp_no INT NOT NULL,
@@ -55,23 +60,31 @@ CREATE TABLE IF NOT EXISTS dept_manager (
     FOREIGN KEY (dept_no) REFERENCES departments(dept_no)
 );
 
--- 6. Create 'salaries' table
+-- 6.'salaries' table - salary costs; supports historical tracking 
 CREATE TABLE IF NOT EXISTS salaries (
-    emp_no iNT NOT NULL,
+    emp_no iNT NOT NULL PRIMARY KEY,
     salary NUMERIC (10,2) NOT NULL,
 	benefits NUMERIC (10,2),		-- Optional benefits  
 	overhead_cost NUMERIC (10,2),  -- Estimated overhead 
 	total_cost NUMERIC (10,2) NOT NULL,    -- = salary + benefits + overhead     
-    PRIMARY KEY (emp_no),
     FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
 );
 
+SELECT * FROM salaries
+LIMIT 3;
+
+-- Alter 'salaries' table for cleaner view
+ALTER TABLE salaries
+ALTER COLUMN salary TYPE NUMERIC(10,0),
+ALTER COLUMN benefits TYPE NUMERIC(10,0),		
+ALTER COLUMN overhead_cost TYPE NUMERIC(10,0), 
+ALTER COLUMN total_cost TYPE NUMERIC(10,0);
 
 -- =================================
--- CREATE FULL EMPLOYEE DATA VIEW  
+-- CREATE/REPLACE FULL EMPLOYEE DATA VIEW  
 -- clean view for analysis without birth date; preserves original tables 
 -- =================================
-CREATE VIEW employee_data AS
+CREATE OR REPLACE VIEW employee_data AS
 SELECT
     e.emp_no,
     e.first_name,
@@ -88,9 +101,9 @@ SELECT
     s.benefits,
     s.overhead_cost,
     s.total_cost,
-    dm.emp_no AS manager_emp_no
+    CASE WHEN dm.emp_no IS NOT NULL THEN 1 ELSE 0 END AS is_manager_flag
 FROM employees e
-LEFT JOIN salaries s ON e.emp_no = s.emp_no
+LEFT JOIN salaries s ON e.emp_no = s.emp_no 
 LEFT JOIN titles t ON e.emp_title_id = t.title_id
 LEFT JOIN dept_emp de ON e.emp_no = de.emp_no
 LEFT JOIN departments d ON de.dept_no = d.dept_no
@@ -98,63 +111,88 @@ LEFT JOIN dept_manager dm ON e.emp_no = dm.emp_no
 ORDER BY e.emp_no;
 
 SELECT * FROM employee_data
+WHERE is_manager_flag = 0    -- displays 4 rows emaployee_data for non-managers employee only
 LIMIT 4;
+
 -- ==================================
 -- ANALYSIS QUERIES
 -- ==================================
 
--- COMPANY SNAPSHOT: total active employees, total and average salary by today 
+-- COMPANY SNAPSHOT: total active employees, total and average salary, employement duration by today 
 SELECT 
     COUNT(*) AS total_active_employees,
-    SUM(salary) AS total_salary,
-    ROUND(AVG(salary), 0) AS average_salary
+	SUM(CASE WHEN is_manager_flag = 1 THEN 1 ELSE 0 END) AS total_num_managers,
+	SUM(CASE WHEN is_manager_flag = 0 THEN 1 ELSE 0 END) AS total_num_employees,
+    SUM(salary) AS total_salary_year,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median_salary, -- shows median salary
+	ROUND(AVG((now()::date - hire_date)::int) / 365.0, 2) AS avg_employment_duration_years
 FROM employee_data
 WHERE emp_status = 'Active';
 
--- BY DEPARTMENT: headcount, avg salary, number of managers  
+-- BY DEPARTMENT: headcount, avg salary, number of managers, employement duration by today  
 SELECT 
     dept_name,
-    COUNT(*) AS employee_count,
-    ROUND(AVG(salary), 0) AS avg_salary,
-    COUNT(manager_emp_no) AS num_managers
+    SUM(CASE WHEN is_manager_flag = 0 THEN 1 ELSE 0 END) dep_employee_count,
+	SUM(CASE WHEN is_manager_flag = 1 THEN 1 ELSE 0 END) AS dep_num_managers,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median_dep_salary,
+	ROUND(AVG((now()::date - hire_date)::int) / 365.0, 2) AS avg_dep_employment_duration_years
 FROM employee_data
 WHERE emp_status = 'Active'
 GROUP BY dept_name
-ORDER BY employee_count DESC;
+ORDER BY dep_employee_count DESC;
 
 -- BY REGION: headcount, avg salary, managers  
 SELECT 
     region,
-    COUNT(*) AS employee_count,
-    ROUND(AVG(salary), 2) AS avg_salary,
-    COUNT(manager_emp_no) AS num_managers
+    SUM(CASE WHEN is_manager_flag = 0 THEN 1 ELSE 0 END) AS reg_employee_count,
+	SUM(CASE WHEN is_manager_flag = 1 THEN 1 ELSE 0 END) AS reg_num_managers,
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median_reg_salary,
+	ROUND(AVG((now()::date - hire_date)::int) / 365.0, 2) AS avg_reg_employment_duration_years 
 FROM employee_data
 WHERE emp_status = 'Active'
 GROUP BY region
-ORDER BY employee_count DESC;
+ORDER BY reg_employee_count DESC;
 
--- EMPLOYEES OVER TIME: hiring trend by year  
-SELECT 
-    EXTRACT(YEAR FROM hire_date) AS hire_year,
-    COUNT(*) AS employees_hired
+-- SALARY TRENDS TO IDENTIFY POTENTIAL 
+SELECT dept_name AS department,
+	title,
+	COUNT(title) AS employee_number,
+	MIN(salary) AS role_min_salary,
+	MAX(salary) AS role_max_salary,
+	PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median_role_salary
 FROM employee_data
-GROUP BY hire_year
-ORDER BY hire_year;
+WHERE emp_status = 'Active'
+GROUP BY dept_name, title
+ORDER BY dept_name, title, role_min_salary;
 
--- TERMINATION TREND: number of employees who left per year  
+-- EMPLOYEES OVER TIME: hiring and departure trends by year  
 SELECT 
-    EXTRACT(YEAR FROM departure_date) AS termination_year,
-    COUNT(*) AS employees_left
+    EXTRACT(YEAR FROM hire_date) AS year,
+	'Hired' AS event_type,
+    COUNT(*) AS employee_count
+FROM employee_data
+GROUP BY year
+	
+UNION ALL
+	
+SELECT 
+    EXTRACT(YEAR FROM departure_date) AS year,
+	'Left' as event_type,
+    COUNT(*) AS employee_count
 FROM employee_data
 WHERE departure_date IS NOT NULL
-GROUP BY termination_year
-ORDER BY termination_year;
+GROUP BY year
+ORDER BY year, event_type
 
 -- TERMINATION TREND: number of employees who left per department
 SELECT 
     dept_name AS department,
-    COUNT(emp_status) AS employees_left
+	COUNT (emp_no) AS total_department_size,
+    SUM(CASE WHEN emp_status = 'Terminated' THEN 1 ELSE 0 END) AS employees_left_total,
+	ROUND(
+	SUM(CASE WHEN emp_status = 'Terminated' THEN 1 ELSE 0 END):: numeric
+	/COUNT (emp_no)*100, 0
+		) AS percentage_left
 FROM employee_data
-WHERE emp_status = 'Terminated'
 GROUP BY dept_name
-ORDER BY employees_left DESC;
+ORDER BY employees_left_total DESC;
